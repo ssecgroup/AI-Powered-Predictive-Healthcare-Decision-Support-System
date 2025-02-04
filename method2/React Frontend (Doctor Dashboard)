@@ -1,0 +1,88 @@
+step: 1
+npx create-react-app predictive-ai-app
+cd predictive-ai-app
+npm install axios tailwindcss
+npx tailwindcss init
+
+step:2
+module.exports = {
+  content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+};
+
+step:3 Create App.js (Doctor Input Form + AI Results)
+import { useState } from "react";
+import axios from "axios";
+
+function App() {
+  const [age, setAge] = useState("");
+  const [gender, setGender] = useState("");
+  const [symptoms, setSymptoms] = useState("");
+  const [prediction, setPrediction] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const response = await axios.post("http://localhost:8000/predict", {
+      age: parseInt(age),
+      gender,
+      symptoms: symptoms.split(","),
+    });
+    setPrediction(response.data.prediction);
+  };
+
+  return (
+    <div className="flex flex-col items-center p-10">
+      <h1 className="text-3xl font-bold mb-5">Predictive AI Healthcare App</h1>
+      <form onSubmit={handleSubmit} className="bg-white shadow-md p-6 rounded-lg w-96">
+        <label className="block mb-2">Age:</label>
+        <input
+          type="number"
+          className="w-full p-2 border rounded"
+          value={age}
+          onChange={(e) => setAge(e.target.value)}
+        />
+
+        <label className="block mt-3 mb-2">Gender:</label>
+        <select
+          className="w-full p-2 border rounded"
+          value={gender}
+          onChange={(e) => setGender(e.target.value)}
+        >
+          <option value="">Select</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+
+        <label className="block mt-3 mb-2">Symptoms (comma-separated):</label>
+        <input
+          type="text"
+          className="w-full p-2 border rounded"
+          value={symptoms}
+          onChange={(e) => setSymptoms(e.target.value)}
+        />
+
+        <button
+          type="submit"
+          className="w-full mt-5 bg-blue-500 text-white p-2 rounded"
+        >
+          Get Prediction
+        </button>
+      </form>
+
+      {prediction && (
+        <div className="mt-5 p-4 bg-green-100 text-green-800 rounded">
+          <strong>Prediction:</strong> {prediction}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default App;
+
+step: 4
+npm start
+
