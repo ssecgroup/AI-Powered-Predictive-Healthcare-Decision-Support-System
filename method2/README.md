@@ -31,7 +31,7 @@ The **Predictive Diagnosis App** aims to revolutionize healthcare decision-makin
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/predictive-diagnosis-app.git
+   git clone https://github.com/ssecgroup/AI-Powered-Predictive-Healthcare-Decision-Support-System.git
    cd predictive-diagnosis-app
    
 2) Install dependencies:
