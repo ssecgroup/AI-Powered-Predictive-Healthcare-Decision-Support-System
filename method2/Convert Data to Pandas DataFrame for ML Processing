@@ -1,0 +1,13 @@
+import pandas as pd
+
+# Convert extracted data to DataFrame
+df = pd.DataFrame(patients_processed)
+
+# Convert birth date to Age
+df["Birth Date"] = pd.to_datetime(df["Birth Date"], errors="coerce")
+df["Age"] = (pd.Timestamp.today() - df["Birth Date"]).dt.days // 365
+
+# Drop Birth Date
+df = df.drop(columns=["Birth Date"])
+
+print(df.head())  # Show structured data
