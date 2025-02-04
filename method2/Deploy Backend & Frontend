@@ -1,0 +1,14 @@
+step:1 
+# Install dependencies
+pip install gunicorn
+
+# Run backend
+gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app
+
+step:2 Deploy Frontend on Vercel
+
+npm install -g vercel
+vercel login
+vercel deploy
+
+
