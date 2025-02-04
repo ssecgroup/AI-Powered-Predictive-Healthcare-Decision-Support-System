@@ -1,0 +1,13 @@
+import requests
+import json
+
+# Fetch Patient Data from FHIR API
+FHIR_API_URL = "http://hapi.fhir.org/baseR4/Patient?_count=10"
+response = requests.get(FHIR_API_URL)
+data = response.json()
+
+# Save to a local file
+with open("patients.json", "w") as file:
+    json.dump(data, file, indent=4)
+
+print("FHIR Data Fetched & Saved!")
