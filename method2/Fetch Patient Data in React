@@ -1,0 +1,73 @@
+import React, { useState } from "react";
+import axios from "axios";
+
+const DiagnosisForm = () => {
+  const [patientId, setPatientId] = useState("");
+  const [formData, setFormData] = useState({
+    age: "",
+    gender: "",
+    bloodPressure: "",
+    cholesterol: "",
+  });
+  const [prediction, setPrediction] = useState(null);
+
+  // Fetch patient data from FHIR API
+  const fetchPatientData = async () => {
+    try {
+      const response = await axios.get(`http://127.0.0.1:5000/fetch-patient/${patientId}`);
+      setFormData(response.data);
+    } catch (error) {
+      console.error("Error fetching patient data:", error);
+    }
+  };
+
+  // Handle Form Submit for AI Prediction
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post("http://127.0.0.1:5000/predict", formData);
+      setPrediction(response.data.risk_level);
+    } catch (error) {
+      console.error("Prediction error:", error);
+    }
+  };
+
+  return (
+    <div className="max-w-md mx-auto p-6 bg-white shadow-md rounded-lg">
+      <h2 className="text-xl font-bold mb-4">Predictive Diagnosis</h2>
+      
+      <div className="flex space-x-2 mb-3">
+        <input 
+          type="text" 
+          placeholder="Enter Patient ID" 
+          value={patientId} 
+          onChange={(e) => setPatientId(e.target.value)} 
+          className="w-full p-2 border rounded"
+        />
+        <button onClick={fetchPatientData} className="p-2 bg-green-600 text-white rounded">
+          Fetch
+        </button>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <input type="number" name="age" placeholder="Age" value={formData.age} onChange={(e) => setFormData({ ...formData, age: e.target.value })} required className="w-full p-2 border rounded"/>
+        <select name="gender" value={formData.gender} onChange={(e) => setFormData({ ...formData, gender: e.target.value })} required className="w-full p-2 border rounded">
+          <option value="">Select Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+        <input type="number" name="bloodPressure" placeholder="Blood Pressure" value={formData.bloodPressure} onChange={(e) => setFormData({ ...formData, bloodPressure: e.target.value })} required className="w-full p-2 border rounded"/>
+        <input type="number" name="cholesterol" placeholder="Cholesterol" value={formData.cholesterol} onChange={(e) => setFormData({ ...formData, cholesterol: e.target.value })} required className="w-full p-2 border rounded"/>
+        <button type="submit" className="w-full p-2 bg-blue-600 text-white rounded">Get Prediction</button>
+      </form>
+
+      {prediction && (
+        <div className="mt-4 p-3 bg-gray-200 rounded">
+          <strong>Risk Level:</strong> {prediction}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default DiagnosisForm;
