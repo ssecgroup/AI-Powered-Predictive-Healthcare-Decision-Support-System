@@ -1,0 +1,73 @@
+install Dependencies
+
+Ensure you have the required libraries installed.
+
+
+pip install pandas numpy scikit-learn tensorflow
+
+2️⃣ Step: Load Preprocessed Data
+We’ll load the cleaned patient dataset and split it into training & testing sets.
+
+Python Code: Load & Split Data
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+
+# Load cleaned data (from previous preprocessing step)
+df = pd.read_csv("processed_fhir_data.csv")
+
+# Define Features & Target (Example: Predicting Disease Risk)
+X = df.drop(columns=["DiseaseRisk"])  # Features (Age, Gender, Vitals, etc.)
+y = df["DiseaseRisk"]  # Target Label (0 = Low, 1 = High Risk)
+
+# Split into Train & Test Sets (80% Train, 20% Test)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+print(f"Training Data: {X_train.shape}, Testing Data: {X_test.shape}")
+
+3️⃣ Step: Train a Machine Learning Model
+
+We'll train a Random Forest Classifier for quick baseline performance.
+
+Python Code: Train ML Model
+
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
+# Initialize Model
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+
+# Train Model
+model.fit(X_train, y_train)
+
+# Predict on Test Data
+y_pred = model.predict(X_test)
+
+# Evaluate Accuracy
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Model Accuracy: {accuracy * 100:.2f}%")
+
+4️⃣ Step: Train a Deep Learning Model (Optional)
+For better accuracy, we can use a Neural Network (TensorFlow/Keras).
+
+Python Code: Train Neural Network
+
+import tensorflow as tf
+from tensorflow import keras
+
+# Define Neural Network Architecture
+model = keras.Sequential([
+    keras.layers.Dense(32, activation='relu', input_shape=(X_train.shape[1],)),
+    keras.layers.Dense(16, activation='relu'),
+    keras.layers.Dense(1, activation='sigmoid')  # Output: 0 or 1
+])
+
+# Compile Model
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+
+# Train Model
+model.fit(X_train, y_train, epochs=10, batch_size=16, validation_data=(X_test, y_test))
+
+# Evaluate Performance
+test_loss, test_acc = model.evaluate(X_test, y_test)
+print(f"Neural Network Accuracy: {test_acc * 100:.2f}%")
