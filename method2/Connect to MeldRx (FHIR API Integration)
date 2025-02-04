@@ -1,0 +1,16 @@
+step: 1
+pip install requests
+
+step: 2 Update main.py to Fetch FHIR Data
+
+import requests  
+
+# Fetch patient data from MeldRx  
+@app.get("/fetch_patient/{patient_id}")
+def fetch_patient_data(patient_id: str):
+    response = requests.get(f"https://api.meldrx.com/fhir/Patient/{patient_id}")
+    if response.status_code == 200:
+        return response.json()
+    return {"error": "Patient not found"}
+
+
