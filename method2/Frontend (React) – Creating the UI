@@ -1,0 +1,129 @@
+1️⃣ Backend (Flask API) – Serving AI Predictions
+We'll create a Flask API that receives patient data, runs the AI model, and returns disease risk predictions.
+
+📌 Install Dependencies
+
+pip install flask flask-cors joblib
+
+📌 Create app.py (Flask Backend)
+
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+import joblib
+import pandas as pd
+
+app = Flask(__name__)
+CORS(app)  # Enable CORS for frontend
+
+# Load Trained Model
+model = joblib.load("ai_model.pkl")  
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    data = request.json  # Receive patient data (JSON)
+    
+    # Convert data to DataFrame
+    df = pd.DataFrame([data])
+    
+    # Make Prediction
+    prediction = model.predict(df)[0]
+    
+    return jsonify({"risk_level": "High" if prediction == 1 else "Low"})
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+2️⃣ Frontend (React) – Creating the UI
+
+We'll build a React app where users input patient details, and the AI model predicts disease risk.
+
+📌 Install Dependencies
+
+npx create-react-app predictive-diagnosis
+cd predictive-diagnosis
+npm install axios
+
+📌 Create src/components/DiagnosisForm.js
+
+import React, { useState } from "react";
+import axios from "axios";
+
+const DiagnosisForm = () => {
+  const [formData, setFormData] = useState({
+    age: "",
+    gender: "",
+    bloodPressure: "",
+    cholesterol: "",
+  });
+  const [prediction, setPrediction] = useState(null);
+
+  // Handle Input Change
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // Handle Form Submit
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post("http://127.0.0.1:5000/predict", formData);
+      setPrediction(response.data.risk_level);
+    } catch (error) {
+      console.error("Prediction error:", error);
+    }
+  };
+
+  return (
+    <div className="max-w-md mx-auto p-6 bg-white shadow-md rounded-lg">
+      <h2 className="text-xl font-bold mb-4">Predictive Diagnosis</h2>
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <input type="number" name="age" placeholder="Age" value={formData.age} onChange={handleChange} required className="w-full p-2 border rounded"/>
+        <select name="gender" value={formData.gender} onChange={handleChange} required className="w-full p-2 border rounded">
+          <option value="">Select Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+        <input type="number" name="bloodPressure" placeholder="Blood Pressure" value={formData.bloodPressure} onChange={handleChange} required className="w-full p-2 border rounded"/>
+        <input type="number" name="cholesterol" placeholder="Cholesterol" value={formData.cholesterol} onChange={handleChange} required className="w-full p-2 border rounded"/>
+        <button type="submit" className="w-full p-2 bg-blue-600 text-white rounded">Get Prediction</button>
+      </form>
+
+      {prediction && (
+        <div className="mt-4 p-3 bg-gray-200 rounded">
+          <strong>Risk Level:</strong> {prediction}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default DiagnosisForm;
+
+3️⃣ Connect React App with Backend
+
+📌 Update src/App.js
+
+import React from "react";
+import DiagnosisForm from "./components/DiagnosisForm";
+
+function App() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <DiagnosisForm />
+    </div>
+  );
+}
+
+export default App;
+
+🚀 Run the Full Stack App
+
+Start Backend (Flask)
+
+python app.py
+Start Frontend (React)
+
+npm start
+Now, users can input patient data, and the AI model will predict the risk level in real-time! 🚀🔥
+
+Next Step: Integrate with a FHIR API to fetch real patient data! 
