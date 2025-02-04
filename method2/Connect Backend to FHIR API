@@ -1,0 +1,55 @@
+step:1
+ pip install fhirclient
+
+step:2 Update app.py (Flask Backend)
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+import joblib
+import pandas as pd
+import fhirclient.models.patient as fhir_patient
+from fhirclient import client
+
+app = Flask(__name__)
+CORS(app)
+
+# FHIR Server Config
+settings = {
+    'app_id': 'predictive-diagnosis',
+    'api_base': 'https://hapi.fhir.org/baseR4'  # Public FHIR test server
+}
+
+# Load Trained Model
+model = joblib.load("ai_model.pkl")
+
+@app.route('/fetch-patient/<patient_id>', methods=['GET'])
+def fetch_patient_data(patient_id):
+    """Fetch patient data from FHIR API"""
+    smart = client.FHIRClient(settings=settings)
+    patient = fhir_patient.Patient.read(patient_id, smart.server)
+
+    if not patient:
+        return jsonify({"error": "Patient not found"}), 404
+
+    # Extract necessary data fields (adjust as needed)
+    patient_data = {
+        "age": 30,  # Example age, adjust logic to parse actual data
+        "gender": patient.gender,
+        "bloodPressure": 120,  # Fetch from observations
+        "cholesterol": 200  # Fetch from observations
+    }
+    
+    return jsonify(patient_data)
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    """Receive patient data and return risk level prediction"""
+    data = request.json
+    df = pd.DataFrame([data])
+    prediction = model.predict(df)[0]
+    
+    return jsonify({"risk_level": "High" if prediction == 1 else "Low"})
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
