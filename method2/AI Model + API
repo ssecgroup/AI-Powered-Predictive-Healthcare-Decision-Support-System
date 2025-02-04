@@ -1,0 +1,34 @@
+1) pip install fastapi uvicorn pandas scikit-learn joblib
+2) Create main.py (FastAPI Server)
+from fastapi import FastAPI
+ ```
+import pandas as pd
+import joblib
+from pydantic import BaseModel
+
+# Load trained AI model
+model = joblib.load("ai_model.pkl")  
+
+# Initialize FastAPI app
+app = FastAPI()
+
+# Define request schema
+class PatientData(BaseModel):
+    age: int
+    gender: str
+    symptoms: list[str]
+
+# Preprocess function
+def preprocess_input(data):
+    df = pd.DataFrame([data.dict()])
+    df['gender'] = 1 if df['gender'] == 'male' else 0
+    return df
+
+# API Endpoint: Predict Disease
+@app.post("/predict")
+def predict_disease(patient: PatientData):
+    processed_data = preprocess_input(patient)
+    prediction = model.predict(processed_data)[0]
+    return {"prediction": prediction}  ```
+
+# Run server with: uvicorn main:app --reload
