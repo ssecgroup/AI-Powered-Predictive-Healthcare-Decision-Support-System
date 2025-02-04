@@ -1,0 +1,25 @@
+import json
+
+# Load FHIR JSON Data
+with open("patients.json", "r") as file:
+    data = json.load(file)
+
+# Extract Patient Features
+def extract_features(patient):
+    name = patient.get("name", [{}])[0].get("given", ["Unknown"])[0]
+    gender = patient.get("gender", "Unknown")
+    birth_date = patient.get("birthDate", "Unknown")
+    patient_id = patient.get("id", "N/A")
+
+    return {
+        "ID": patient_id,
+        "Name": name,
+        "Gender": gender,
+        "Birth Date": birth_date
+    }
+
+# Process all patients
+patients_processed = [extract_features(entry) for entry in data["entry"]]
+
+# Print Sample Data
+print(patients_processed[:5])  # Show first 5 patients
