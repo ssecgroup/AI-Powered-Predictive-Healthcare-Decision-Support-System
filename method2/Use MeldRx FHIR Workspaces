@@ -1,0 +1,19 @@
+Since we’re participating in the MeldRx Predictive AI Challenge, we can import FHIR patient data into our MeldRx workspace for testing.
+
+Steps to Get Patient Data from MeldRx
+Sign up/Login: MeldRx Developer Portal
+
+Create a Workspace:
+
+Go to Workspaces → Create New
+
+Select FHIR R4 version
+
+Import Sample Patients:
+Upload a FHIR JSON file from Synthea or use the provided sandbox patients.
+Fetch Data via API:
+
+url = "https://api.meldrx.com/fhir/Patient?_count=10"
+headers = {"Authorization": "Bearer YOUR_API_KEY"}
+response = requests.get(url, headers=headers)
+print(response.json())
