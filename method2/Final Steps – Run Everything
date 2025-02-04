@@ -1,0 +1,7 @@
+step:1
+python app.py
+
+step:2 
+npm start
+
+
