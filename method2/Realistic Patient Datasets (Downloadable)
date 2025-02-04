@@ -1,0 +1,15 @@
+These datasets contain FHIR-formatted patient data that can be imported into your system.
+
+A. Synthea - Generate FHIR Patient Data
+Tool: Synthea GitHub
+How to Generate FHIR Data:
+
+git clone https://github.com/synthetichealth/synthea.git
+cd synthea
+
+./run_synthea -p 100  # Generates 100 patient records
+Generated FHIR JSON files will be in the output/fhir/ folder.
+
+B. CMS Medicare Data (FHIR)
+Source: CMS Blue Button API
+Access: You need to register for an API key.
