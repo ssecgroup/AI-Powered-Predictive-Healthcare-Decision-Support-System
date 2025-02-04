@@ -1,0 +1,14 @@
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+
+# Handle missing values
+df = df.fillna("Unknown")
+
+# Encode categorical variables
+label_encoder = LabelEncoder()
+df["Gender"] = label_encoder.fit_transform(df["Gender"])  # Convert Male/Female to 0/1
+
+# Normalize Age
+scaler = StandardScaler()
+df["Age"] = scaler.fit_transform(df[["Age"]])
+
+print(df.head())  # Final cleaned dataset
