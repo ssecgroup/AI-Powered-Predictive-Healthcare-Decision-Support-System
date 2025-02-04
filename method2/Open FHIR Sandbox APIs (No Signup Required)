@@ -1,0 +1,29 @@
+step: 1
+
+These public FHIR APIs provide realistic patient data that can be used to test your application.
+
+A. MITRE’s SyntheticMass (FHIR R4)
+API Base URL: https://syntheticmass.mitre.org/v1/fhir/
+
+Example Request (Get a list of patients):
+
+curl -X GET "https://syntheticmass.mitre.org/v1/fhir/Patient?_count=10"
+
+Example in Python:
+
+import requests
+
+url = "https://syntheticmass.mitre.org/v1/fhir/Patient?_count=10"
+response = requests.get(url)
+print(response.json())  # Returns patient records
+
+B. HAPI FHIR Test Server
+API Base URL: http://hapi.fhir.org/baseR4/
+Example Request (Fetch a random patient):
+
+curl -X GET "http://hapi.fhir.org/baseR4/Patient?_count=5"
+Example in Python:
+
+url = "http://hapi.fhir.org/baseR4/Patient?_count=5"
+response = requests.get(url)
+print(response.json())
